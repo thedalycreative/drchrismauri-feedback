@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Training Session Feedback | Dr Christian Mauri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cm-navy: #1a2a3a;
+    --cm-blue: #116dff;
+    --cm-charcoal: #2d3436;
+    --cm-slate: #636e72;
+    --cm-light: #f8f9fa;
+    --cm-border: #dfe6e9;
+    --cm-white: #ffffff;
+    --cm-gold: #f0c040;
+    --cm-gold-dim: #ddd;
+    --cm-success: #00b894;
+    --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --font-body: 'Josefin Sans', 'Helvetica Neue', Arial, sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: var(--font-body);
+    background: var(--cm-light);
+    color: var(--cm-charcoal);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--cm-navy);
+    padding: 48px 30px 44px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(17,109,255,0.12) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-inner { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; }
+  .header h1 {
+    font-family: var(--font-heading);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--cm-white);
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-family: var(--font-body);
+    font-weight: 300;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.7);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .header .tagline {
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.5);
+    margin-top: 12px;
+  }
+  .header-bar {
+    width: 50px;
+    height: 3px;
+    background: var(--cm-blue);
+    margin: 16px auto 0;
+    border-radius: 2px;
+  }
+
+  /* ── CONTAINER ── */
+  .container { max-width: 660px; margin: 0 auto; padding: 0 16px; }
+  .form-body {
+    background: var(--cm-white);
+    padding: 40px 36px;
+    margin-top: -20px;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── FIELDS ── */
+  .field { margin-bottom: 26px; }
+  .field label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--cm-navy);
+    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .field label .optional {
+    font-weight: 300;
+    color: var(--cm-slate);
+    text-transform: none;
+    font-size: 0.82rem;
+  }
+  .field .hint {
+    font-size: 0.8rem;
+    color: var(--cm-slate);
+    font-weight: 300;
+    margin-bottom: 8px;
+  }
+  input[type="text"], input[type="date"], textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--cm-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    color: var(--cm-charcoal);
+    background: var(--cm-white);
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--cm-blue);
+    box-shadow: 0 0 0 3px rgba(17,109,255,0.1);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ── AUTOCOMPLETE TOPIC ── */
+  .autocomplete-wrapper { position: relative; }
+  .autocomplete-input {
+    width: 100%;
+    padding: 13px 16px;
+    padding-right: 40px;
+    border: 1.5px solid var(--cm-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    color: var(--cm-charcoal);
+    background: var(--cm-white);
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+  .autocomplete-input:focus {
+    outline: none;
+    border-color: var(--cm-blue);
+    box-shadow: 0 0 0 3px rgba(17,109,255,0.1);
+  }
+  .autocomplete-icon {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cm-slate);
+    pointer-events: none;
+    font-size: 0.85rem;
+  }
+  .autocomplete-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--cm-white);
+    border: 1.5px solid var(--cm-border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    max-height: 220px;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  .autocomplete-list.active { display: block; }
+  .autocomplete-item {
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--cm-charcoal);
+    transition: background 0.15s;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .autocomplete-item:last-child { border-bottom: none; }
+  .autocomplete-item:hover, .autocomplete-item.highlighted {
+    background: #eef4ff;
+    color: var(--cm-navy);
+  }
+  .autocomplete-item .match {
+    font-weight: 700;
+    color: var(--cm-blue);
+  }
+  .autocomplete-item.create-new {
+    color: var(--cm-blue);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* ── STAR RATINGS ── */
+  .rating-group { display: flex; flex-direction: column; gap: 10px; }
+  .rating-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--cm-light);
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+  }
+  .rating-item:hover { border-color: var(--cm-border); }
+  .rating-item span {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--cm-charcoal);
+    flex: 1;
+    margin-right: 12px;
+  }
+  .stars { display: flex; gap: 3px; direction: rtl; }
+  .stars input { display: none; }
+  .stars label {
+    cursor: pointer;
+    font-size: 1.55rem;
+    color: var(--cm-gold-dim);
+    transition: color 0.15s, transform 0.15s;
+  }
+  .stars label:hover { transform: scale(1.15); }
+  .stars input:checked ~ label,
+  .stars label:hover,
+  .stars label:hover ~ label { color: var(--cm-gold); }
+
+  /* ── RADIO GROUP ── */
+  .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1.5px solid var(--cm-border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.88rem;
+    font-weight: 400;
+  }
+  .radio-group input { display: none; }
+  .radio-group input:checked + span { color: var(--cm-blue); font-weight: 600; }
+  .radio-group label:has(input:checked) {
+    border-color: var(--cm-blue);
+    background: rgba(17,109,255,0.05);
+  }
+
+  /* ── SUBMIT ── */
+  .submit-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--cm-navy);
+    color: var(--cm-white);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: var(--font-body);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  }
+  .submit-btn:hover {
+    background: #243b53;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(26,42,58,0.25);
+  }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ── SUCCESS ── */
+  .success-msg { display: none; text-align: center; padding: 60px 30px; }
+  .success-msg .checkmark {
+    width: 72px;
+    height: 72px;
+    background: var(--cm-success);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  .success-msg h2 {
+    font-family: var(--font-heading);
+    color: var(--cm-navy);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  .success-msg p { color: var(--cm-slate); font-weight: 300; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 28px 16px 32px;
+    margin-top: 8px;
+  }
+  .footer a { text-decoration: none; }
+  .footer-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0.6;
+    transition: opacity 0.25s;
+  }
+  .footer-inner:hover { opacity: 0.9; }
+  .footer-logo {
+    height: 26px;
+    width: auto;
+  }
+  .footer-text {
+    font-size: 0.72rem;
+    color: var(--cm-slate);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+  }
+  .footer-text strong {
+    font-weight: 600;
+    color: var(--cm-charcoal);
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--cm-border);
+    margin: 28px 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width: 500px) {
+    .header { padding: 36px 20px 32px; }
+    .header h1 { font-size: 1.5rem; }
+    .form-body { padding: 28px 20px; margin-top: -14px; }
+    .rating-item {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .radio-group { flex-direction: column; }
+    .radio-group label { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <h1>Training Session Feedback</h1>
+    <div class="subtitle">Dr Christian Mauri</div>
+    <div class="header-bar"></div>
+    <div class="tagline">Your feedback helps shape better learning experiences</div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div class="container">
+  <div class="form-body" id="formContainer">
+    <form id="feedbackForm" onsubmit="return submitForm(event)">
+
+      <div class="field">
+        <label>Your Name <span class="optional">(optional)</span></label>
+        <input type="text" name="name" placeholder="e.g. Jane Smith">
+      </div>
+
+      <div class="field">
+        <label>Training Topic *</label>
+        <div class="autocomplete-wrapper">
+          <input type="text" class="autocomplete-input" id="topicInput" name="topic" placeholder="Start typing to search topics..." required autocomplete="off">
+          <span class="autocomplete-icon">&#x1F50D;</span>
+          <div class="autocomplete-list" id="topicList"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Date of Session *</label>
+        <input type="date" name="sessionDate" required>
+      </div>
+
+      <div class="field">
+        <label>Your Organisation *</label>
+        <input type="text" name="organisation" required placeholder="e.g. City of Swan">
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label>Please rate the following areas *</label>
+        <div class="hint">1 = Poor &bull; 5 = Excellent</div>
+        <div class="rating-group">
+          <div class="rating-item">
+            <span>Quality of Content / Information</span>
+            <div class="stars">
+              <input type="radio" name="content" value="5" id="c5"><label for="c5">&#9733;</label>
+              <input type="radio" name="content" value="4" id="c4"><label for="c4">&#9733;</label>
+              <input type="radio" name="content" value="3" id="c3"><label for="c3">&#9733;</label>
+              <input type="radio" name="content" value="2" id="c2"><label for="c2">&#9733;</label>
+              <input type="radio" name="content" value="1" id="c1"><label for="c1">&#9733;</label>
+            </div>
+          </div>
+          <div class="rating-item">
+            <span>Presenter / Delivery Style</span>
+            <div class="stars">
+              <input type="radio" name="presenter" value="5" id="p5"><label for="p5">&#9733;</label>
+              <input type="radio" name="presenter" value="4" id="p4"><label for="p4">&#9733;</label>
+              <input type="radio" name="presenter" value="3" id="p3"><label for="p3">&#9733;</label>
+              <input type="radio" name="presenter" value="2" id="p2"><label for="p2">&#9733;</label>
+              <input type="radio" name="presenter" value="1" id="p1"><label for="p1">&#9733;</label>
+            </div>
+          </div>
+          <div class="rating-item">
+            <span>Mix of Techniques / Activities</span>
+            <div class="stars">
+              <input type="radio" name="techniques" value="5" id="t5"><label for="t5">&#9733;</label>
+              <input type="radio" name="techniques" value="4" id="t4"><label for="t4">&#9733;</label>
+              <input type="radio" name="techniques" value="3" id="t3"><label for="t3">&#9733;</label>
+              <input type="radio" name="techniques" value="2" id="t2"><label for="t2">&#9733;</label>
+              <input type="radio" name="techniques" value="1" id="t1"><label for="t1">&#9733;</label>
+            </div>
+          </div>
+          <div class="rating-item">
+            <span>Materials and Resources</span>
+            <div class="stars">
+              <input type="radio" name="materials" value="5" id="m5"><label for="m5">&#9733;</label>
+              <input type="radio" name="materials" value="4" id="m4"><label for="m4">&#9733;</label>
+              <input type="radio" name="materials" value="3" id="m3"><label for="m3">&#9733;</label>
+              <input type="radio" name="materials" value="2" id="m2"><label for="m2">&#9733;</label>
+              <input type="radio" name="materials" value="1" id="m1"><label for="m1">&#9733;</label>
+            </div>
+          </div>
+          <div class="rating-item">
+            <span>Organisation and Professionalism</span>
+            <div class="stars">
+              <input type="radio" name="professionalism" value="5" id="o5"><label for="o5">&#9733;</label>
+              <input type="radio" name="professionalism" value="4" id="o4"><label for="o4">&#9733;</label>
+              <input type="radio" name="professionalism" value="3" id="o3"><label for="o3">&#9733;</label>
+              <input type="radio" name="professionalism" value="2" id="o2"><label for="o2">&#9733;</label>
+              <input type="radio" name="professionalism" value="1" id="o1"><label for="o1">&#9733;</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="field">
+        <label>Most valuable part of the session? *</label>
+        <textarea name="valuable" required placeholder="Tell us what stood out to you..."></textarea>
+      </div>
+      <div class="field">
+        <label>Suggestions for improvement <span class="optional">(optional)</span></label>
+        <textarea name="suggestions" placeholder="We welcome constructive feedback..."></textarea>
+      </div>
+      <div class="field">
+        <label>Would you recommend this training? *</label>
+        <div class="radio-group">
+          <label><input type="radio" name="recommend" value="Yes" required><span>Yes, definitely</span></label>
+          <label><input type="radio" name="recommend" value="Maybe"><span>Maybe</span></label>
+          <label><input type="radio" name="recommend" value="No"><span>No</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label>Additional Comments <span class="optional">(optional)</span></label>
+        <textarea name="comments" placeholder="Anything else you'd like to share..."></textarea>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">Submit Feedback</button>
+    </form>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div class="success-msg" id="successMsg">
+    <div class="checkmark">&#10003;</div>
+    <h2>Thank You</h2>
+    <p>Your feedback has been recorded.<br>We truly appreciate you taking the time.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <a href="https://thedalycreative.xyz/" target="_blank" rel="noopener">
+      <div class="footer-inner">
+        <img src="https://thedalycreative.xyz/images/icons/logo-1300x507.png" alt="The Daly Creative" class="footer-logo">
+        <div class="footer-text">Created by <strong>Tim Daly</strong><br>for The Daly Creative</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSpguRtBVhR72M_cc1eTc0iSuaEP6S9O4iwJGR8XFdowic7UeYy_Q2pXMydRjkGC3RVA/exec';
+
+// ── TRAINING TOPICS (all known topics from historical data) ──
+const TOPICS = [
+  "De-escalating Conflict and Aggression",
+  "Advanced De-escalation Skills",
+  "De-escalation Skills for Disability Workers",
+  "Collaboration and Conflict Resolution",
+  "Managing Challenging Personalities",
+  "Emotional Intelligence",
+  "Develop Your Emotional Intelligence",
+  "Positive Psychology and Resilience",
+  "Leadership",
+  "Leading Others: New Managers and Supervisors",
+  "Strengths Based Leadership",
+  "Group Facilitation Tools",
+  "Better Professional Writing",
+  "Mentoring Others",
+  "Dignity of Risk",
+  "Understanding Neurodiversity",
+  "Disability Awareness: Access and Inclusion",
+  "Mental Health and Wellbeing for Seniors",
+  "Reflective Supervision",
+  "Difficult Conversations and Delivering Feedback",
+  "Professional Boundaries",
+  "Public Speaking: Introductory",
+  "Public Speaking: Intermediate",
+  "Succession Planning for Staff and Boards",
+  "Strategic Decision Making",
+  "Time Management Tools"
+];
+
+// ── AUTOCOMPLETE ENGINE ──
+const topicInput = document.getElementById('topicInput');
+const topicList = document.getElementById('topicList');
+let highlightedIdx = -1;
+
+function renderList(matches, query) {
+  topicList.innerHTML = '';
+  highlightedIdx = -1;
+
+  if (matches.length === 0 && query.length >= 2) {
+    const item = document.createElement('div');
+    item.className = 'autocomplete-item create-new';
+    item.textContent = `Use "${query}" as a custom topic`;
+    item.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      topicInput.value = query;
+      closeList();
+    });
+    topicList.appendChild(item);
+    topicList.classList.add('active');
+    return;
+  }
+
+  if (matches.length === 0) { closeList(); return; }
+
+  matches.forEach((topic, idx) => {
+    const item = document.createElement('div');
+    item.className = 'autocomplete-item';
+    item.dataset.index = idx;
+    // Highlight the matching portion
+    const lowerTopic = topic.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    const matchStart = lowerTopic.indexOf(lowerQuery);
+    if (matchStart >= 0) {
+      item.innerHTML =
+        topic.substring(0, matchStart) +
+        '<span class="match">' + topic.substring(matchStart, matchStart + query.length) + '</span>' +
+        topic.substring(matchStart + query.length);
+    } else {
+      item.textContent = topic;
+    }
+    item.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      topicInput.value = topic;
+      closeList();
+    });
+    topicList.appendChild(item);
+  });
+  topicList.classList.add('active');
+}
+
+function closeList() {
+  topicList.classList.remove('active');
+  topicList.innerHTML = '';
+  highlightedIdx = -1;
+}
+
+topicInput.addEventListener('input', function() {
+  const q = this.value.trim();
+  if (q.length === 0) { closeList(); return; }
+  // Score and sort: prioritise starts-with, then contains
+  const lq = q.toLowerCase();
+  const scored = TOPICS
+    .map(t => {
+      const lt = t.toLowerCase();
+      if (lt.startsWith(lq)) return { topic: t, score: 2 };
+      if (lt.includes(lq)) return { topic: t, score: 1 };
+      // fuzzy: check if all words in query appear in topic
+      const words = lq.split(/\s+/);
+      if (words.every(w => lt.includes(w))) return { topic: t, score: 0.5 };
+      return null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.score - a.score)
+    .map(s => s.topic);
+
+  renderList(scored.slice(0, 8), q);
+});
+
+topicInput.addEventListener('focus', function() {
+  if (this.value.trim().length === 0) {
+    // Show all topics on focus
+    renderList(TOPICS.slice(0, 8), '');
+  }
+});
+
+topicInput.addEventListener('keydown', function(e) {
+  const items = topicList.querySelectorAll('.autocomplete-item');
+  if (!items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    highlightedIdx = Math.min(highlightedIdx + 1, items.length - 1);
+    updateHighlight(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    highlightedIdx = Math.max(highlightedIdx - 1, 0);
+    updateHighlight(items);
+  } else if (e.key === 'Enter' && highlightedIdx >= 0) {
+    e.preventDefault();
+    items[highlightedIdx].dispatchEvent(new Event('mousedown'));
+  } else if (e.key === 'Escape') {
+    closeList();
+  }
+});
+
+function updateHighlight(items) {
+  items.forEach((el, i) => {
+    el.classList.toggle('highlighted', i === highlightedIdx);
+    if (i === highlightedIdx) el.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.autocomplete-wrapper')) closeList();
+});
+
+// ── FORM SUBMISSION ──
+function submitForm(e) {
+  e.preventDefault();
+  const form = document.getElementById('feedbackForm');
+  const btn = document.getElementById('submitBtn');
+  const ratings = ['content','presenter','techniques','materials','professionalism'];
+  for (const r of ratings) {
+    if (!form.querySelector(`input[name="${r}"]:checked`)) {
+      alert('Please rate all five areas before submitting.');
+      return false;
+    }
+  }
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  const fd = new FormData(form);
+  const data = Object.fromEntries(fd.entries());
+  data.timestamp = new Date().toISOString();
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  }).then(() => {
+    document.getElementById('formContainer').style.display = 'none';
+    document.getElementById('successMsg').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }).catch(() => {
+    alert('There was an error submitting. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Submit Feedback';
+  });
+  return false;
+}
+</script>
+</body>
+</html>

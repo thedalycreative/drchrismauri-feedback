@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "name": "christian-mauri-feedback",
+  "public": true,
+  "routes": [
+    { "src": "/dashboard", "dest": "/dashboard.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
